@@ -14,7 +14,7 @@ st.write("Welcome Shahzaib! This is the core interface for the YC Fall 2026 Batc
 st.markdown("---")
 
 # 🔑 YAHAN APNI ORIGINAL API KEY PASTE KAREIN
-OPENWEATHER_API_KEY = "YAHAN_APNI_KEY_PASTE_KAREIN"
+OPENWEATHER_API_KEY = "1b22b3a23ba71851c97705ad5bf45e14"
 
 # Layout Configuration (2 Columns)
 col1, col2 = st.columns([1, 1.2])
