@@ -1,138 +1,110 @@
 import streamlit as st
+import pandas as pd
 import folium
 from streamlit_folium import st_folium
-import pandas as pd
-import numpy as np
-import requests  # Real-time API calls ke liye
 
-# Page Configuration
-st.set_page_config(page_title="AI Agri-Tech Satellite MVP", layout="wide")
+# Streamlit page layout configurations
+st.set_page_config(page_title="Khetify MVP - AI Crop Analysis", layout="wide")
 
-# Title and Header
-st.title("🌱 AI Agri-Tech Satellite MVP")
-st.write("Welcome Shahzaib! This is the core interface for the YC Fall 2026 Batch Demo (Live Original Data).")
-st.markdown("---")
+st.title("🌱 Khetify - Friction-Free Precision Agriculture")
+st.subheader("AI-Driven Crop Analysis Dashboard for Smallholder Farmers")
 
-# 🔑 YAHAN APNI ORIGINAL API KEY PASTE KAREIN
-OPENWEATHER_API_KEY = "1b22b3a23ba71851c97705ad5bf45e14"
-
-# Layout Configuration (2 Columns)
-col1, col2 = st.columns([1, 1.2])
-
-is_urban = False
-
-with col1:
-    st.subheader("📡 Target Coordinates")
-    lat = st.number_input("Enter Latitude", value=31.815500, format="%.6f", key="farm_lat")
-    lon = st.number_input("Enter Longitude", value=72.564500, format="%.6f", key="farm_lon")
-    
-    st.markdown("### 🚜 Farm Profile")
-    farm_size = st.number_input("Enter Farm Size (Acres)", value=10, min_value=1, key="farm_acres")
-    crop_type = st.selectbox("Select Crop Type", ["Wheat (Gandum)", "Rice (Chawal)", "Sugarcane (Ganna)", "Cotton (Kapaas)"], key="farm_crop")
-    
-    run_analysis = st.button("🚀 Run AI Satellite Analysis", use_container_width=True)
-
-with col2:
-    st.subheader("📊 Live Satellite & Agro Output")
-    if run_analysis:
-        st.info(f"Fetching Live Atmospheric & Satellite Data for Target [{lat}, {lon}]...")
-        
-        # --- ORIGINAL LIVE DATA FETCHING VIA API ---
-        weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric"
-        
-        try:
-            response = requests.get(weather_url).json()
-            
-            if response.get("cod") == 200:
-                # Live values from exact coordinates
-                real_temp = response["main"]["temp"]
-                real_humidity = response["main"]["humidity"]
-                weather_desc = response["weather"][0]["description"].title()
-                st.success(f"Original Live Connection Established! Current Status: {weather_desc}")
-            else:
-                # Fallback if key is turning on or restricted
-                real_temp = 34.5
-                real_humidity = 58.0
-                st.warning("Using High-Fidelity Agri-Simulation (API key initializing).")
-        except Exception as e:
-            real_temp = 34.5
-            real_humidity = 58.0
-            st.warning("API connection timed out. Using cached baseline data.")
-
-        # --- FIXED URBAN DETECTION BOUNDARIES ---
-        if 33.68 <= lat <= 33.69 and 73.04 <= lon <= 73.05:
-            is_urban = True
-            st.error("⚠️ AI Detection: Non-Agricultural Zone detected (Urban/Road Area). NDVI calculation suspended.")
-            
-            m1, m2, m3 = st.columns(3)
-            m1.metric(label="NDVI (Crop Health)", value="0.02", delta="No Vegetation", delta_color="inverse")
-            m2.metric(label="Soil Temperature", value="0.0 °C", delta="N/A", delta_color="off")
-            m3.metric(label="Air Moisture (Humidity)", value="0.0%", delta="N/A", delta_color="off")
-        
-        else:
-            st.markdown("### 🌾 Field Analytics (Real-time Original Inference)")
-            
-            # Formulating consistent NDVI model matching real vegetation behavior
-            seed_val = int(abs(lat * lon) * 10000) % 1000
-            np.random.seed(seed_val)
-            ndvi = round(np.random.uniform(0.74, 0.83), 2)
-            
-            m1, m2, m3 = st.columns(3)
-            m1.metric(label="NDVI (Satellite Crop Health)", value=f"{ndvi}", delta="Optimal" if ndvi > 0.7 else "Normal")
-            m2.metric(label="Live Field Temp (°C)", value=f"{real_temp} °C", delta="Actual Climate")
-            m3.metric(label="Live Soil/Air Moisture", value=f"{real_humidity}%", delta="Adequate")
-            
-            # Historical Trend
-            st.markdown("#### 📈 Historical Vegetation Index (6-Month Trend)")
-            months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-            trend_data = pd.DataFrame({
-                "Month": months,
-                "NDVI Index": [ndvi-0.14, ndvi-0.09, ndvi-0.02, ndvi, ndvi+0.01, ndvi]
-            }).set_index("Month")
-            st.line_chart(trend_data)
-            
-    else:
-        st.write("Enter coordinates and click the button to trigger the satellite mapping engine.")
-
-# --- LIVE SATELLITE MAP SECTION ---
-st.markdown("---")
-st.subheader("🗺️ Interactive Satellite Map")
-
-m = folium.Map(location=[lat, lon], zoom_start=15, control_scale=True)
-google_satellite = folium.TileLayer(
-    tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-    attr='Google',
-    name='Google Satellite',
-    overlay=False,
-    control=True
+# --- STEP 1: DEMO MODE SWITCH (For Video Presentation) ---
+st.sidebar.header("🎬 Video Demo Settings")
+demo_mode = st.sidebar.radio(
+    "Select Field Condition for Demo:",
+    ["Healthy Field Simulation", "🚨 Infected Field (Problem Area Example)"]
 )
-google_satellite.add_to(m)
 
+st.sidebar.write("---")
+st.sidebar.header("📍 Farm Location Settings")
+
+# Dynamic coordinates and zoom based on demo mode selection
+if "Infected" in demo_mode:
+    # Coordinates mimicking a troubled crop area
+    default_lat = 33.6150
+    default_lon = 73.0820
+    map_color = "red"
+    fill_color = "crimson"
+    layer_name = "🚨 Critical Pest Alert Grid"
+else:
+    # Default healthy crop coordinates
+    default_lat = 33.6007
+    default_lon = 73.0679
+    map_color = "darkgreen"
+    fill_color = "lime"
+    layer_name = "🟢 Optimal Crop Grid"
+
+user_lat = st.sidebar.number_input("Enter Latitude", value=default_lat, format="%.6f")
+user_lon = st.sidebar.number_input("Enter Longitude", value=default_lon, format="%.6f")
+zoom_level = st.sidebar.slider("Map Zoom Level", min_value=1, max_value=18, value=15)
+
+# --- STEP 2: SATELLITE SELECTION ---
+st.sidebar.header("🛰️ Satellite Data Sources")
+satellite_option = st.sidebar.selectbox(
+    "Choose Primary Satellite Layer:",
+    ["Sentinel-2 (ESA - High Precision Vegetation)", "Landsat (NASA - Soil & Moisture)"]
+)
+
+# --- STEP 3: INTERACTIVE MAP (Absolute Coordinate Locking) ---
+st.write(f"### 🗺️ Live Farm Border Tracking: {layer_name}")
+
+# Map initialisation with strict layout [Latitude, Longitude] - Fixes the zoom bug
+m = folium.Map(location=[user_lat, user_lon], zoom_start=zoom_level, control_scale=True)
+
+# Farm center pin configuration
 folium.Marker(
-    [lat, lon], 
-    popup=f"Analyzed Plot: {lat}, {lon}",
-    icon=folium.Icon(color="green", icon="leaf")
+    [user_lat, user_lon],
+    popup=f"Farm Center\nLat: {user_lat}\nLon: {user_lon}",
+    tooltip="Click to view farm telemetry",
+    icon=folium.Icon(color="red" if "Infected" in demo_mode else "green", icon="leaf")
 ).add_to(m)
 
-map_key = f"map_render_{lat}_{lon}_{farm_size}"
-st_folium(m, width="100%", height=450, key=map_key)
+# Drawing the boundary grid based on health selection
+folium.Circle(
+    location=[user_lat, user_lon],
+    radius=250, # 250 meters farm perimeter
+    color=map_color,
+    fill=True,
+    fill_color=fill_color,
+    fill_opacity=0.3,
+    popup=f"{satellite_option} Telemetry Zone"
+).add_to(m)
 
-# --- BUSINESS & FINANCIAL INSIGHTS SECTION ---
-if run_analysis and not is_urban:
-    st.markdown("---")
-    st.subheader("💰 Business & Supply Chain Insights (80% MVP Target)")
-    
-    base_yields = {"Wheat (Gandum)": 42, "Rice (Chawal)": 38, "Sugarcane (Ganna)": 620, "Cotton (Kapaas)": 28}
-    market_prices = {"Wheat (Gandum)": 4000, "Rice (Chawal)": 7000, "Sugarcane (Ganna)": 450, "Cotton (Kapaas)": 8500}
-    
-    yield_per_acre = base_yields[crop_type]
-    total_yield = yield_per_acre * farm_size
-    estimated_revenue = total_yield * market_prices[crop_type]
-    estimated_profit = estimated_revenue * 0.48
-    
-    f1, f2, f3 = st.columns(3)
-    f1.metric(label=f"Predicted Total Yield ({crop_type})", value=f"{total_yield:,} Maunds", delta=f"{yield_per_acre} Maunds/Acre")
-    f2.metric(label="Estimated Market Value (PKR)", value=f"Rs. {int(estimated_revenue):,}")
-    f3.metric(label="Net Projected Profit (48% Margin)", value=f"Rs. {int(estimated_profit):,}", delta="High Yield Zone")
+# Rendering the map
+st_folium(m, width=900, height=450, key="khetify_dynamic_map")
 
-    st.info(f"💡 **Logistics & Export Note:** This predicted volume of {total_yield:,} Maunds qualifies for regional supply chain optimization.")
+
+# --- STEP 4: RUN AI ANALYSIS (Dynamic Pitch Outputs) ---
+st.write("---")
+st.write("### 🧠 Diagnostic Center")
+
+if st.button("🚀 Run AI Analysis", type="primary"):
+    st.success("🔄 Fetching multi-spectral bands from satellite buffers...")
+    
+    col1, col2 = st.columns(2)
+    
+    if "Infected" in demo_mode:
+        # PROBLEM AREA SCENARIO FOR VIDEO PITCH
+        with col1:
+            st.metric(label="🌾 NDVI Health Index (Crop Vigor)", value="0.38", delta="-0.31 (CRITICAL DROPOUT)", delta_color="inverse")
+            st.error("🚨 **AI Diagnostic Output: PEST INFESTATION DETECTED**")
+            st.write("Spectral signature analysis detects heavy **Yellow Rust (Fungal Infestation)** spreading rapidly across the North-East perimeter grid coordinates.")
+            
+        with col2:
+            st.metric(label="💧 Soil Moisture Saturation", value="34%", delta="-21% (Severe Stress)", delta_color="inverse")
+            st.subheader("📲 Automated Farmer Alert Sent:")
+            st.warning("*\"Shahzaib sahib, aapke khet ke shumal-mashriqi (North-East) hisse mein pilay rang ki bimari (Yellow Rust) shuru ho chuki hai. Agle 24 ghante mein sirf is zone par 120ml Propiconazole ka spray karein taake baki khet bach jaye.\"*")
+    else:
+        # HEALTHY FIELD SCENARIO
+        with col1:
+            st.metric(label="🌾 NDVI Health Index (Crop Vigor)", value="0.74", delta="+0.05 (Healthy)")
+            st.write("**AI Diagnostic Output:**")
+            st.write("The crop canopy reflects optimal biomass and nitrogen absorption levels. No anomalies found.")
+            
+        with col2:
+            st.metric(label="💧 Soil Moisture Saturation", value="62%", delta="-3% (Optimal)")
+            st.write("**Recommended Action Items:**")
+            st.info("Everything looks green. Maintain the standard irrigation loop for the next 48 hours.")
+else:
+    st.warning("Click the 'Run AI Analysis' button above to trigger the satellite diagnostic engine.")
