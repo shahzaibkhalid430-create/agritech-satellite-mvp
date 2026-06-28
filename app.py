@@ -144,6 +144,13 @@ if st.session_state.clicked:
         st.markdown("### 📈 Core Diagnostics Metrics")
         st.caption(f"Active Coordinates Target: {current_lat:.4f}, {current_lon:.4f} | Size: {dynamic_acreage} Acres")
         
+        # SHIFTED TO TOP: Searchable Language Option Selector placed prominently
+        selected_lang = st.selectbox(
+            "🌐 Select Outbound Alert Language:",
+            ["Urdu (اردو)", "English", "Spanish (Español)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)", "French (Français)", "Portuguese (Português)"]
+        )
+        st.markdown("---")
+        
         if not is_infected:
             st.success("✅ Field Status: HEALTHY")
             st.metric(label="NDVI (Vegetation Index)", value=f"{calc_ndvi}", delta="Stable Vegetation")
@@ -167,12 +174,6 @@ if st.session_state.clicked:
             st.markdown("---")
             st.markdown("### 📱 Localized Actionable Outbound Alert")
             
-            # Searchable Language Option Selector
-            selected_lang = st.selectbox(
-                "🌐 Select Local Farmer Language:",
-                ["Urdu (اردو)", "English", "Spanish (Español)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)", "French (Français)", "Portuguese (Português)"]
-            )
-            
             infected_lat = current_lat + 0.0006
             infected_lon = current_lon + 0.0006
             
@@ -192,6 +193,10 @@ if st.session_state.clicked:
                     f"⚠️ Alerta Khetify:\n"
                     f"Enfermedad detectada en las coordenadas ({infected_lat:.4f}, {infected_lon:.4f}). "
                     f"No fumigue todo el campo. Aplique pesticidas específicos solo en la zona afectada para ahorrar costos."
+                ),
+                "Campesino (Spanish variation)": (
+                    f"⚠️ Alerta Khetify:\n"
+                    f"Enfermedad detectada en ({infected_lat:.4f}, {infected_lon:.4f}). Solo aplique el producto en el parche marcado."
                 ),
                 "Punjabi (پنجابی)": (
                     f"⚠️ کھیتی فائی الرٹ:\n"
