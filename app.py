@@ -6,6 +6,26 @@ import hashlib
 # Page Configuration
 st.set_page_config(page_title="Khetify - AI Satellite Analysis Engine", layout="wide")
 
+# --- CUSTOM CSS FOR INJECTING NATURAL AGRICULTURE CORE THEME ---
+st.markdown("""
+    <style>
+        /* Main application background theme */
+        .stApp {
+            background: linear-gradient(135deg, #0d1611 0%, #111a14 50%, #16241b 100%) !important;
+            color: #e2e8f0 !important;
+        }
+        /* Sidebar background tuning */
+        [data-testid="stSidebar"] {
+            background-color: #0b120e !important;
+            border-right: 1px solid #1c3325 !important;
+        }
+        /* Metric block styling adjustments for contrast */
+        div[data-testid="stMetricValue"] {
+            color: #ffffff !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- EXTENDED MULTI-LANGUAGE TRANSLATION DICTIONARY SYSTEM ---
 LANG_DATA = {
     "English": {
@@ -158,7 +178,7 @@ LANG_DATA = {
         "remedy_heading": "💊 Plano de Ação e Remédio Direcionado por IA",
         "info_sidebar": "👈 Insira as coordenadas ou execute o diagnóstico inicial para ativar a visualização da matriz.",
         "disease_detected": "⚠️ Ferrugem fúngica da folha detectada. Ação necessária.",
-        "remedy_text": "👉 **Recomendação:** Aplique o fungicida *Tebuconazole* ou *Propiconazole* **APENAS dentro da zona do círculo vermelho identificada**. Não pulverize o campo inteiro. Garanta a aplicação localizada em até 48 horas para evitar a propagação."
+        "remedy_text": "👉 **Recomendação:** Aplique o fungicida *Tebuconazole* ou *Propiconazole* **APENAS dentro da zona do círculo vermelho após identificada**. Não pulverize o campo inteiro. Garanta a aplicação localizada em até 48 horas para evitar a propagação."
     },
     "Punjabi (پنجابی)": {
         "title": "🌾 کھیتی فائی - لائیو سیٹلائٹ تجزیاتی نظام",
@@ -238,7 +258,7 @@ LANG_DATA = {
     },
     "Hindi (हिंदी)": {
         "title": "🌾 खेतीफाई - रियल-TIME सैटेलाइट डायग्नोस्टिक्स",
-        "subtitle": "निर्देशांक दर्ज करें या लाइव मल्टी-स्पेक्ट्रल विश्लेषण चलाने के लिए **मानचित्र पर कहीं भी क्लिक करें**।",
+        "subtitle": "निर्देशांक दर्ज करें या लाइव मार्ग-स्पेक्ट्रल विश्लेषण चलाने के लिए **मानचित्र पर कहीं भी क्लिक करें**।",
         "sidebar_title": "📍 खेत के निर्देशांक",
         "lat": "अक्षांश (Latitude)",
         "lon": "देशांतर (Longitude)",
@@ -358,9 +378,7 @@ if st.session_state.clicked:
             attr="Google Satellite Imagery"
         )
         
-        # UPGRADE: Square Boundary Box has been replaced with a precise circle layer mapping logic
         if not is_infected:
-            # Precise Selection Circle (Green) for Targeted Tracking
             folium.Circle(
                 radius=110,
                 location=[current_lat, current_lon],
@@ -372,7 +390,6 @@ if st.session_state.clicked:
             ).add_to(m)
             
         else:
-            # Standalone Red Circle Anomaly Detection Radar
             infected_lat = current_lat + 0.0004
             infected_lon = current_lon + 0.0004
             folium.Circle(
@@ -385,7 +402,8 @@ if st.session_state.clicked:
                 popup="⚠️ Infection Anomaly Area Spot!"
             ).add_to(m)
             
-        map_output = st_folium(m, width=800, height=520, key="khetify_fixed_map_layer")
+        # UPGRADE: Increased height to 650 to eliminate empty space and align with the right metrics perfectly
+        map_output = st_folium(m, width=800, height=650, key="khetify_fixed_map_layer")
         
         if map_output and "last_clicked" in map_output and map_output["last_clicked"] is not None:
             clicked_data = map_output["last_clicked"]
