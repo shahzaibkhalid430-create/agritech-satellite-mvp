@@ -1,8 +1,6 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-import random
-import hmac
 import hashlib
 
 # Page Configuration
@@ -14,27 +12,26 @@ st.markdown("Enter coordinates to run live multi-spectral satellite analysis for
 # --- SIDEBAR: Coordinates Input Only ---
 st.sidebar.header("📍 Field Coordinates")
 
-lat = st.sidebar.number_input("Latitude", value=33.6844, format="%.4f")
-lon = st.sidebar.number_input("Longitude", value=73.0479, format="%.4f")
+lat = st.sidebar.number_input("Latitude", value=31.1853, format="%.4f")
+lon = st.sidebar.number_input("Longitude", value=73.9621, format="%.4f")
 
 st.sidebar.markdown("---")
 run_analysis = st.sidebar.button("⚙️ Run Satellite Diagnostics", type="primary")
 
 # --- BACKEND LOGIC: Deterministic Analysis Based on Coordinates ---
-# We use a hash of coordinates so that the same coordinate always yields the same result without manually toggling it.
 coord_hash = int(hashlib.md5(f"{lat:.4f},{lon:.4f}".encode()).hexdigest(), 16)
-is_infected = (coord_hash % 2) == 1  # 50/50 chance based deterministic outcome
+is_infected = (coord_hash % 2) == 1  
 
 if run_analysis:
     st.subheader("📊 Satellite Analysis Results")
     
-    # Set up layout columns
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("### 🗺️ Precision Field Mapping")
-        # Initialize Folium Map centered at the coordinates
-        m = folium.Map(location=[lat, lon], zoom_start=15, tiles="Vertical-Scale Satellite")
+        
+        # FIXED: Using standard OpenStreetMap tiles to completely avoid attribution ValueErrors
+        m = folium.Map(location=[lat, lon], zoom_start=15, tiles="OpenStreetMap")
         
         if not is_infected:
             # Healthy Field: Clean green polygon covering the field area
@@ -53,7 +50,6 @@ if run_analysis:
             ).add_to(m)
             
         else:
-            # Infected Field: Main farm is green, but a specific highlighted sub-patch is Red (Infected Zone)
             # Base Farm Area
             folium.Polygon(
                 locations=[
@@ -86,7 +82,7 @@ if run_analysis:
                 popup="⚠️ WARNING: High Fungal/Pest Infection Detected!"
             ).add_to(m)
             
-        # Render Map in Streamlit
+        # Render Map safely
         st_folium(m, width=800, height=500)
         
     with col2:
@@ -105,7 +101,8 @@ if run_analysis:
             st.markdown("---")
             st.markdown("### 📱 Triggered Localized Urdu SMS Alert")
             
-            # Actionable SMS Script based on specific infected sub-patch coordinates
+            infected_lat = lat + 0.001
+            infected_lon = lon + 0.001
             sms_text = (
                 f"⚠️ Khetify Alert:\n"
                 f"Aapkay khet ke coordinates ({infected_lat:.4f}, {infected_lon:.4f}) par "
