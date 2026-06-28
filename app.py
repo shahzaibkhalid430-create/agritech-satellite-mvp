@@ -9,7 +9,7 @@ st.set_page_config(page_title="Khetify - AI Satellite Analysis Engine", layout="
 st.title("🌾 Khetify - Real-time Satellite Diagnostics")
 st.markdown("Enter coordinates or **click anywhere directly on the map** to run live multi-spectral analysis on adjacent fields.")
 
-# --- SESSION STATE MANAGEMENT ---
+# --- SESSION STATE INITIALIZATION ---
 if "clicked" not in st.session_state:
     st.session_state.clicked = False
 if "lat" not in st.session_state:
@@ -17,16 +17,17 @@ if "lat" not in st.session_state:
 if "lon" not in st.session_state:
     st.session_state.lon = 73.9621
 
-# --- SIDEBAR: Coordinates & Satellite Sources ---
+# --- SIDEBAR CONFIGURATION ---
 st.sidebar.header("📍 Field Coordinates")
 
-# Standard sidebar inputs sync with session state
-input_lat = st.sidebar.number_input("Latitude", value=st.session_state.lat, format="%.4f", key="sidebar_lat")
-input_lon = st.sidebar.number_input("Longitude", value=st.session_state.lon, format="%.4f", key="sidebar_lon")
+# Using direct numeric values with clean state fallback mechanics
+input_lat = st.sidebar.number_input("Latitude", value=st.session_state.lat, format="%.4f")
+input_lon = st.sidebar.number_input("Longitude", value=st.session_state.lon, format="%.4f")
 
-# If user modifies manually via sidebar, update session state values
-if input_lat != st.session_state.lat or input_lon != st.session_state.lon:
+# Explicit check: If sidebar inputs are updated manually, override current state values
+if input_lat != st.session_state.lat and input_lat != 31.1853:
     st.session_state.lat = input_lat
+if input_lon != st.session_state.lon and input_lon != 73.9621:
     st.session_state.lon = input_lon
 
 st.sidebar.markdown("---")
@@ -42,7 +43,7 @@ run_analysis = st.sidebar.button("⚙️ Run Satellite Diagnostics", type="prima
 if run_analysis:
     st.session_state.clicked = True
 
-# --- BACKEND LOGIC: Deterministic Output based on current active state ---
+# --- CALCULATIONS BASE LINE ---
 current_lat = st.session_state.lat
 current_lon = st.session_state.lon
 
@@ -57,7 +58,6 @@ if st.session_state.clicked:
     with col1:
         st.markdown("### 🗺️ Precision Field Mapping")
         
-        # Google Maps Hybrid Layer
         google_satellite_url = "https://mt1.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}"
         m = folium.Map(
             location=[current_lat, current_lon], 
@@ -67,7 +67,7 @@ if st.session_state.clicked:
         )
         
         if not is_infected:
-            # Healthy Field Polygon
+            # Healthy Polygon
             folium.Polygon(
                 locations=[
                     [current_lat - 0.002, current_lon - 0.002],
@@ -83,7 +83,7 @@ if st.session_state.clicked:
             ).add_to(m)
             
         else:
-            # Base Farm Bound
+            # Base Bound Area
             folium.Polygon(
                 locations=[
                     [current_lat - 0.002, current_lon - 0.002],
@@ -98,7 +98,7 @@ if st.session_state.clicked:
                 popup="Overall Field Bound"
             ).add_to(m)
             
-            # Isolated Anomaly Zone
+            # Specific Disease Spot
             infected_lat = current_lat + 0.0006
             infected_lon = current_lon + 0.0006
             folium.Polygon(
@@ -115,16 +115,16 @@ if st.session_state.clicked:
                 popup="⚠️ WARNING: High Fungal/Pest Infection Detected!"
             ).add_to(m)
             
-        # Capture map click return events
-        map_output = st_folium(m, width=800, height=520, key="khetify_interactive_map")
+        # Render map component with unique execution parameters
+        map_output = st_folium(m, width=800, height=520, key="khetify_fixed_map_layer")
         
-        # INTERACTIVE CLICK ENGINE: If user clicks another field on the map
-        if map_output and map_output.get("last_clicked"):
-            clicked_coords = map_output["last_clicked"]
-            clicked_lat = round(clicked_coords["lat"],  4)
-            clicked_lon = round(clicked_coords["lng"], 4)
+        # FIXED CLICK ENGINE: Intercepting location click and manually overriding session loop
+        if map_output and "last_clicked" in map_output and map_output["last_clicked"] is not None:
+            clicked_data = map_output["last_clicked"]
+            clicked_lat = round(clicked_data["lat"], 4)
+            clicked_lon = round(clicked_data["lng"], 4)
             
-            # Update state values immediately if the click is new
+            # Force script restart with updated parameters if new coordinate is clicked
             if clicked_lat != current_lat or clicked_lon != current_lon:
                 st.session_state.lat = clicked_lat
                 st.session_state.lon = clicked_lon
@@ -132,7 +132,7 @@ if st.session_state.clicked:
         
     with col2:
         st.markdown("### 📈 Core Diagnostics Metrics")
-        st.caption(f"Active Target: {current_lat:.4f}, {current_lon:.4f}")
+        st.caption(f"Active Coordinates Target: {current_lat:.4f}, {current_lon:.4f}")
         
         if not is_infected:
             st.success("✅ Field Status: HEALTHY")
@@ -142,7 +142,7 @@ if st.session_state.clicked:
             st.markdown("---")
             st.markdown("### 💰 Estimated Field Economic Value")
             st.metric(label="Est. Total Produce Market Value", value="PKR 2,450,000", delta="100% Target Attained")
-            st.caption("Value calculated based on standard acreage parameters and current market rate index.")
+            st.caption("Value calculated based on standard acreage parameters.")
             
         else:
             st.error("🚨 Field Status: ANOMALY DETECTED (INFECTED)")
@@ -150,8 +150,8 @@ if st.session_state.clicked:
             st.metric(label="Soil Moisture Profile", value="38%", delta="-24% Critical Drop", delta_color="inverse")
             
             st.markdown("---")
-            st.markdown("### 💰 Projected Economic Impact & Recovery")
-            st.metric(label="Risk Exposure Value (Potential Crop Loss)", value="PKR 850,000", delta="-34% At Risk", delta_color="inverse")
+            st.markdown("### 💰 Projected Economic Impact")
+            st.metric(label="Risk Exposure Value", value="PKR 850,000", delta="-34% At Risk", delta_color="inverse")
             st.metric(label="Targeted Spray Cost Savings", value="PKR 145,000", delta="+90% Input Recovery")
             
             st.markdown("---")
