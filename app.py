@@ -6,7 +6,7 @@ import hashlib
 # Page Configuration
 st.set_page_config(page_title="Khetify - AI Satellite Analysis Engine", layout="wide")
 
-# --- MULTI-LANGUAGE TRANSLATION DICTIONARY SYSTEM ---
+# --- EXTENDED MULTI-LANGUAGE TRANSLATION DICTIONARY SYSTEM ---
 LANG_DATA = {
     "English": {
         "title": "🌾 Khetify - Real-time Satellite Diagnostics",
@@ -82,7 +82,7 @@ LANG_DATA = {
         "remedy_heading": "💊 آرٹیفیشل انٹیلیجنس تجویز اور طریقہ علاج",
         "info_sidebar": "👈 لائیو میٹرکس اور نقشہ فعال کرنے کے لیے کوآرڈینیٹس درج کریں یا ٹیسٹ کا بٹن دبائیں۔",
         "disease_detected": "⚠️ پودوں میں فنگل لیف رسٹ (کنگی کی بیماری) پائی گئی ہے۔",
-        "remedy_text": "👉 **تجویز کردہ طریقہ علاج:** فنگس کش دوا *Tebuconazole* یا *Propiconazole* کا اسپرے **صرح نقشے پر نشان زدہ سرخ دائرے کے اندر کریں**۔ پورے کھیت میں اسپرے کرنے کی بالکل ضرورت نہیں ہے۔ اگلے 48 گھنٹوں میں اسپرے مکمل کریں تاکہ بیماری مزید نہ پھیلے۔"
+        "remedy_text": "👉 **تجویز کردہ طریقہ علاج:** فنگس کش دوا *Tebuconazole* یا *Propiconazole* کا اسپرے **صرف نقشے پر نشان زدہ سرخ دائرے کے اندر کریں**۔ پورے کھیت میں اسپرے کرنے کی بالکل ضرورت نہیں ہے۔ اگلے 48 گھنٹوں میں اسپرے مکمل کریں تاکہ بیماری مزید نہ پھیلے۔"
     },
     "Spanish (Español)": {
         "title": "🌾 Khetify - Diagnóstico Satelital en Tiempo Real",
@@ -121,13 +121,127 @@ LANG_DATA = {
         "info_sidebar": "👈 Ingrese las coordenadas o ejecute el diagnóstico para activar la vista interactiva.",
         "disease_detected": "⚠️ Roya fúngica de la hoja detectada. Acción requerida.",
         "remedy_text": "👉 **Recomendación:** Aplique el fungicida *Tebuconazole* o *Propiconazole* **SOLO dentro de la zona del círculo rojo identificado**. No fumigue todo el campo. Aplique dentro de las 48 horas para contener la infección."
+    },
+    "Punjabi (پنجابی)": {
+        "title": "🌾 کھیتی فائی - لائیو سیٹلائٹ تجزیاتی نظام",
+        "subtitle": "کوآرڈینیٹس درج کرو یا لائیو رپورٹ دیکھن لئی **نقشے تے کتھے بھی کلک کرو**۔",
+        "sidebar_title": "📍 کھیت دے کوآرڈینیٹس",
+        "lat": "لیٹی ٹیوڈ",
+        "lon": "لۆنگی ٹیوڈ",
+        "sat_config": "🛰️ سیٹلائٹ کنفیگریشن",
+        "sat_select": "سیٹلائٹ چنو:",
+        "btn_run": "⚙️ لائیو چیکنگ شروع کرو",
+        "results_heading": "📊 سیٹلائٹ رپورٹ دے نتائج",
+        "map_heading": "🗺️ کھیت دا نقشہ",
+        "metrics_heading": "📈 بنیادی تشخیصی اشاریے",
+        "active_target": "موجودہ پوزیشن",
+        "size": "رقبہ",
+        "acres": "ایکر",
+        "status_healthy": "✅ کھیت دی حالت: بالکل ٹھیک (HEALTHY)",
+        "status_infected": "🚨 کھیت دی حالت: بیماری دا خطرہ (INFECTED)",
+        "ndvi": "NDVI (فصل دی صحت)",
+        "moisture": "مٹی دی نمی",
+        "stable_veg": "ودیا ہریالی",
+        "optimal_range": "صحیح نمی",
+        "stress_drop": "فصل تے شدید دباؤ",
+        "economic_heading": "💰 کھیت دی متوقع قیمت",
+        "economic_loss_heading": "💰 ہون والے نقصان دا تخمینہ",
+        "market_value": "کل متوقع مارکیٹ ریٹ",
+        "target_attained": "100% ہدف پورا",
+        "value_caption": "معاشی قیمت دا حساب علاقائی مارکیٹ انڈیکس دے حساب نال لایا گیا اے۔",
+        "risk_value": "خطرہ دی مالیت (ممکنہ نقصان)",
+        "yield_vuln": "پیداوار نوں شدید خطرہ",
+        "spray_savings": "صرف لوڑیندے حصے تے سپرے دی بچت",
+        "chem_reduction": "دوائی دے خرچے وچ 90% کمی",
+        "alert_heading": "📱 کسان لئی الرٹ میسج",
+        "broadcast_title": "خودکار ایس ایم ایس",
+        "remedy_heading": "💊 الٰہی علاج اتے اسپرے پلان",
+        "info_sidebar": "👈 نقشہ چالو کرن لئی کوآرڈینیٹس لکھو یا بٹن دباؤ۔",
+        "disease_detected": "⚠️ فنگل لیف رسٹ (کنگی دی بیماری) دا حملہ ہویا اے۔",
+        "remedy_text": "👉 **صلاح:** فنگس مار دوا *Tebuconazole* یا *Propiconazole* دا سپرے **صرف نقشے تے دسے گئے لال دائرے دے اندر کرو**۔ پورے کھیت وچ سپرے کرن دی کوئی لوڑ نئیں۔ اگلے 48 گھنٹے وچ سپرے کرو تاں جے بیماری اگے نہ ودھے۔"
+    },
+    "Arabic (العربية)": {
+        "title": "🌾 خيتيفاي - تشخيص الأقمار الصناعية في الوقت الفعلي",
+        "subtitle": "أدخل الإحداثيات أو **انقر في أي مكان على الخريطة** لتشغيل التحليل متعدد الأطياف.",
+        "sidebar_title": "📍 إحداثيات الحقل",
+        "lat": "خط العرض",
+        "lon": "خط الطول",
+        "sat_config": "🛰️ تكوين القمر الصناعي",
+        "sat_select": "اختر القمر الصناعي المستهدف:",
+        "btn_run": "⚙️ تشغيل التشخيص الساتلي",
+        "results_heading": "📊 نتائج تحليل الأقمار الصناعية",
+        "map_heading": "🗺️ رسم الخرائط الدقيقة للحقل",
+        "metrics_heading": "📈 مقاييس التشخيص الأساسية",
+        "active_target": "الإحداثيات النشطة",
+        "size": "المساحة",
+        "acres": "فدان",
+        "status_healthy": "✅ حالة الحقل: سليم وآمن",
+        "status_infected": "🚨 حالة الحقل: تم رصد إصابة (INFECTED)",
+        "ndvi": "NDVI (مؤشر الغطاء النباتي)",
+        "moisture": "نسبة رطوبة التربة",
+        "stable_veg": "غطاء نباتي مستقر",
+        "optimal_range": "نطاق مثالي",
+        "stress_drop": "انخفاض حرج بسبب الإجهاد",
+        "economic_heading": "💰 القيمة الاقتصادية المقدرة للحقل",
+        "economic_loss_heading": "💰 التأثير الاقتصادي المتوقع",
+        "market_value": "القيمة السوقية الإجمالية للمحصول",
+        "target_attained": "تم تحقيق الهدف 100%",
+        "value_caption": "يتم حساب مقاييس القيمة ديناميكيًا بناءً على مؤشر السوق الإقليمي ومساحة الحقل.",
+        "risk_value": "القيمة المعرضة للخطر (الخسارة المحتملة)",
+        "yield_vuln": "تأثر إنتاجية المحاصيل",
+        "spray_savings": "توفير تكاليف الرش الموجه",
+        "chem_reduction": "+90% تقليل المواد الكيميائية",
+        "alert_heading": "📱 تنبيه موجه للمزارع المحلي",
+        "broadcast_title": "محتوى الرسالة النصية التلقائية",
+        "remedy_heading": "💊 خطة العلاج الموجهة بالذكاء الاصطناعي",
+        "info_sidebar": "👈 أدخل الإحداثيات أو قم بتشغيل التشخيص لتنشيط الخريطة التفاعلية.",
+        "disease_detected": "⚠️ تم اكتشاف صدأ الأوراق الفطري. اتخاذ إجراء فوري مطلوب.",
+        "remedy_text": "👉 **التوصية:** قم برش مبيد الفطريات *Tebuconazole* أو *Propiconazole* **فقط داخل منطقة الدائرة الحمراء المحددة**. لا ترش الحقل بأكمله. تأكد من التطبيق الموضعي خلال 48 ساعة لمنع الانتشار."
+    },
+    "Hindi (हिंदी)": {
+        "title": "🌾 खेतीफाई - रियल-टाइम सैटेलाइट डायग्नोस्टिक्स",
+        "subtitle": "निर्देशांक दर्ज करें या लाइव मल्टी-स्पेक्ट्रल विश्लेषण चलाने के लिए **मानचित्र पर कहीं भी क्लिक करें**।",
+        "sidebar_title": "📍 खेत के निर्देशांक",
+        "lat": "अक्षांश (Latitude)",
+        "lon": "देशांतर (Longitude)",
+        "sat_config": "🛰️ सैटेलाइट कॉन्फ़िगरेशन",
+        "sat_select": "लक्ष्य सैटेलाइट चुनें:",
+        "btn_run": "⚙️ सैटेलाइट जांच शुरू करें",
+        "results_heading": "📊 सैटेलाइट विश्लेषण के परिणाम",
+        "map_heading": "🗺️ सटीक फील्ड मैपिंग",
+        "metrics_heading": "📈 मुख्य डायग्नोस्टिक मेट्रिक्स",
+        "active_target": "सक्रिय निर्देशांक लक्ष्य",
+        "size": "आकार",
+        "acres": "एकड़",
+        "status_healthy": "✅ खेत की स्थिति: स्वस्थ (HEALTHY)",
+        "status_infected": "🚨 खेत की स्थिति: विसंगति का पता चला (INFECTED)",
+        "ndvi": "NDVI (वनस्पति सूचकांक)",
+        "moisture": "मिट्टी की नमी का स्तर",
+        "stable_veg": "स्थिर वनस्पति",
+        "optimal_range": "इष्टतम रेंज",
+        "stress_drop": "गंभीर तनाव गिरावट",
+        "economic_heading": "💰 खेत का अनुमानित आर्थिक मूल्य",
+        "economic_loss_heading": "💰 अनुमानित आर्थिक प्रभाव",
+        "market_value": "कुल अनुमानित बाजार मूल्य",
+        "target_attained": "100% लक्ष्य प्राप्त",
+        "value_caption": "मूल्य मेट्रिक्स क्षेत्रीय बाजार सूचकांक और वर्तमान एकड़ के आधार पर तय किए जाते हैं।",
+        "risk_value": "जोखिम मूल्य (संभावित नुकसान)",
+        "yield_vuln": "फसल की पैदावार को खतरा",
+        "spray_savings": "लक्षित छिड़काव लागत बचत",
+        "chem_reduction": "90% रसायनों की बचत",
+        "alert_heading": "📱 किसान के लिए स्वचालित अलर्ट",
+        "broadcast_title": "स्वचालित एसएमएस सामग्री",
+        "remedy_heading": "💊 एआई लक्षित उपचार और कार्य योजना",
+        "info_sidebar": "👈 लाइव देखने के लिए निर्देशांक दर्ज करें या डायग्नोस्टिक बटन दबाएं।",
+        "disease_detected": "⚠️ फंगल लीफ रस्ट (कंगी रोग) का पता चला है। कार्रवाई आवश्यक।",
+        "remedy_text": "👉 **सुझाव:** फंगसनाशक *Tebuconazole* या *Propiconazole* का छिड़काव **केवल पहचाने गए लाल वृत्त (Red Circle) के अंदर करें**। पूरे खेत में छिड़काव न करें। बीमारी को फैलने से रोकने के लिए 48 घंटे के भीतर लक्षित छिड़काव सुनिश्चित करें।"
     }
 }
 
 # --- GLOBAL LANGUAGE SELECTOR ---
 selected_lang = st.selectbox(
-    "🌐 Select System Language / زبان منتخب کریں / Seleccione el idioma del sistema:",
-    ["English", "Urdu (اردو)", "Spanish (Español)"]
+    "🌐 Select System Language / زبان منتخب کریں / Seleccione el idioma:",
+    ["English", "Urdu (اردو)", "Spanish (Español)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)"]
 )
 
 T = LANG_DATA[selected_lang]
@@ -206,7 +320,9 @@ if st.session_state.clicked:
             attr="Google Satellite Imagery"
         )
         
+        # FIX 1: Map rendering constraints updated
         if not is_infected:
+            # Healthy Field Boundary Box (Green) shown normally
             folium.Polygon(
                 locations=[
                     [current_lat - 0.002, current_lon - 0.002],
@@ -222,34 +338,19 @@ if st.session_state.clicked:
             ).add_to(m)
             
         else:
-            folium.Polygon(
-                locations=[
-                    [current_lat - 0.002, current_lon - 0.002],
-                    [current_lat - 0.002, current_lon + 0.002],
-                    [current_lat + 0.002, current_lon + 0.002],
-                    [current_lat + 0.002, current_lon - 0.002]
-                ],
-                color="#00FF00",
-                fill=True,
-                fill_color="#00FF00",
-                fill_opacity=0.12,
-                popup="Field Boundary"
-            ).add_to(m)
-            
-            # Precise Red Circle Layer
+            # If infected, GREEN BOX IS REMOVED COMPLETELY. ONLY Standalone Red Circle triggers.
             infected_lat = current_lat + 0.0004
             infected_lon = current_lon + 0.0004
             folium.Circle(
-                radius=45,
+                radius=65, # Clear visible operational meter radius
                 location=[infected_lat, infected_lon],
                 color="#FF0000",
                 fill=True,
                 fill_color="#FF0000",
-                fill_opacity=0.65,
-                popup="⚠️ Infection Center Spot!"
+                fill_opacity=0.7,
+                popup="⚠️ Infection Anomaly Area Spot!"
             ).add_to(m)
             
-        # FIXED LINE BELOW: Stripped out the syntax error token
         map_output = st_folium(m, width=800, height=520, key="khetify_fixed_map_layer")
         
         if map_output and "last_clicked" in map_output and map_output["last_clicked"] is not None:
@@ -285,23 +386,32 @@ if st.session_state.clicked:
             st.markdown(f"### {T['economic_loss_heading']}")
             st.metric(label=T["risk_value"], value=f"PKR {calc_risk_exposure:,}", delta=T["yield_vuln"], delta_color="inverse")
             st.metric(label=T["spray_savings"], value=f"PKR {calc_savings:,}", delta=T["chem_reduction"])
-            
-            st.markdown("---")
+
+    # FIX 3: REMEDY & SMS SECTIONS SHIFTED OUTSIDE COLUMNS TO THE BOTTOM (Map Ke Niche Full Width)
+    if is_infected:
+        st.markdown("---")
+        remedy_col, alert_col = st.columns(2)
+        
+        with remedy_col:
             st.markdown(f"### {T['remedy_heading']}")
             st.warning(T["disease_detected"])
             st.markdown(T["remedy_text"])
             
-            st.markdown("---")
+        with alert_col:
             st.markdown(f"### {T['alert_heading']}")
-            
             infected_lat_sms = current_lat + 0.0004
             infected_lon_sms = current_lon + 0.0004
             
             sms_texts = {
                 "English": f"⚠️ Khetify Alert:\nDisease detected at coordinates ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Apply targeted pesticide inside the marked red circle to save input costs.",
                 "Urdu (اردو)": f"⚠️ کھیتی فائی الرٹ:\nآپکے کھیت کے کوآرڈینیٹس ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) پر بیماری ملی ہے۔ نقصان سے بچنے کے لیے صرف نشان زدہ سرخ دائرے کے اندر سپرے کریں۔",
-                "Spanish (Español)": f"⚠️ Alerta Khetify:\nInfección detectada en ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Aplique pesticida localizado solo dentro del círculo rojo para ahorrar costos."
+                "Spanish (Español)": f"⚠️ Alerta Khetify:\nInfección detectada en ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Aplique pesticida localizado solo dentro del círculo rojo para ahorrar costos.",
+                "Punjabi (پنجابی)": f"⚠️ کھیتی فائی الرٹ:\nتہاڈے کھیت دے کوآرڈینیٹس ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) تے بیماری لبی اے۔ نقصان توں بچن لئی صرف لال دائرے دے اندر سپرے کرو۔",
+                "Arabic (العربية)": f"⚠️ تنبيه خيتيفاي:\nتم رصد إصابة في ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). يرجى رش المبيد الحشري فقط داخل الدائرة الحمراء المحددة لتوفير التكاليف.",
+                "Hindi (हिंदी)": f"⚠️ खेतीफाई अलर्ट:\nआपके खेत के निर्देशांक ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) पर बीमारी मिली है। नुकसान से बचने के लिए केवल चिन्हित लाल घेरे के अंदर ही छिड़काव करें।"
             }
-            st.text_area(f"{T['broadcast_title']}:", value=sms_texts[selected_lang], height=130)
+            # Fallback handling for safety assignment loops
+            sms_val = sms_texts.get(selected_lang, sms_texts["English"])
+            st.text_area(f"{T['broadcast_title']}:", value=sms_val, height=130)
 else:
     st.info(T["info_sidebar"])
