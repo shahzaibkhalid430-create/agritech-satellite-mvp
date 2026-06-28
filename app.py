@@ -50,8 +50,8 @@ coord_hash = int(hashlib.md5(f"{current_lat:.4f},{current_lon:.4f}".encode()).he
 is_infected = (coord_hash % 2) == 1  
 
 # Generate dynamic data points so results are NEVER the same across locations
-base_modifier = (coord_hash % 15) / 100.0 # Creates a dynamic variant (+- 0.01 to 0.15)
-dynamic_acreage = 5 + (coord_hash % 8)     # Dynamic farm size (5 to 12 acres)
+base_modifier = (coord_hash % 15) / 100.0 
+dynamic_acreage = 5 + (coord_hash % 8)     
 
 if not is_infected:
     calc_ndvi = round(0.72 + (base_modifier * 0.5), 2)
@@ -165,15 +165,61 @@ if st.session_state.clicked:
             st.metric(label="Targeted Spray Cost Savings", value=f"PKR {calc_savings:,}", delta="+90% Chemical Reduction")
             
             st.markdown("---")
-            st.markdown("### 📱 Triggered Localized Urdu SMS Alert")
+            st.markdown("### 📱 Localized Actionable Outbound Alert")
+            
+            # Searchable Language Option Selector
+            selected_lang = st.selectbox(
+                "🌐 Select Local Farmer Language:",
+                ["Urdu (اردو)", "English", "Spanish (Español)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)", "French (Français)", "Portuguese (Português)"]
+            )
+            
             infected_lat = current_lat + 0.0006
             infected_lon = current_lon + 0.0006
-            sms_text = (
-                f"⚠️ Khetify Alert:\n"
-                f"Aapkay khet ke coordinates ({infected_lat:.4f}, {infected_lon:.4f}) par "
-                f"disease scan detect hui hai. Meharbani karkay pooray khet mein spray na karein, "
-                f"sirf is nishandahi kiye gaye hissay par target pesticide spray karein taake kharcha bach sakay."
-            )
-            st.text_area("Automated Outbound SMS Content:", value=sms_text, height=140)
+            
+            # Multi-language dictionary engine for simulated real-time translation mapping
+            sms_templates = {
+                "Urdu (اردو)": (
+                    f"⚠️ Khetify Alert:\n"
+                    f"Aapkay khet ke coordinates ({infected_lat:.4f}, {infected_lon:.4f}) par disease scan detect hui hai. "
+                    f"Meharbani karkay pooray khet mein spray na karein, sirf is nishandahi kiye gaye hissay par target pesticide spray karein taake kharcha bach sakay."
+                ),
+                "English": (
+                    f"⚠️ Khetify Alert:\n"
+                    f"Disease detected at coordinates ({infected_lat:.4f}, {infected_lon:.4f}). "
+                    f"Do not blanket-spray the entire field. Apply targeted pesticides only to the highlighted patch to minimize costs and chemical usage."
+                ),
+                "Spanish (Español)": (
+                    f"⚠️ Alerta Khetify:\n"
+                    f"Enfermedad detectada en las coordenadas ({infected_lat:.4f}, {infected_lon:.4f}). "
+                    f"No fumigue todo el campo. Aplique pesticidas específicos solo en la zona afectada para ahorrar costos."
+                ),
+                "Punjabi (پنجابی)": (
+                    f"⚠️ کھیتی فائی الرٹ:\n"
+                    f"تہاڈے کھیت دے کوآرڈینیٹس ({infected_lat:.4f}, {infected_lon:.4f}) تے بیماری لبی اے۔ "
+                    f"مہربانی کر کے پورے کھیت وچ سپرے نہ کرو، صرف دسے گئے حصے تے ٹارگٹڈ سپرے کرو تاں جے خرچہ بچ سکے۔"
+                ),
+                "Arabic (العربية)": (
+                    f"⚠️ تنبيه خيتيفاي:\n"
+                    f"تم رصد إصابة في الإحداثيات ({infected_lat:.4f}, {infected_lon:.4f}). "
+                    f"يرجى عدم رش الحقل بالكامل. استخدم المبيدات الموجهة فقط في المنطقة المحددة لتقليل التكاليف."
+                ),
+                "Hindi (हिंदी)": (
+                    f"⚠️ खेतीफाई अलर्ट:\n"
+                    f"आपके खेत के निर्देशांक ({infected_lat:.4f}, {infected_lon:.4f}) पर रोग का पता चला है। "
+                    f"कृपया पूरे खेत में कीटनाशक न छिड़कें। खर्च बचाने के लिए केवल प्रभावित हिस्से पर ही लक्षित छिड़काव करें।"
+                ),
+                "French (Français)": (
+                    f"⚠️ Alerte Khetify :\n"
+                    f"Maladie détectée aux coordonnées ({infected_lat:.4f}, {infected_lon:.4f}). "
+                    f"Ne pulvérisez pas tout le champ. Appliquez des pesticides ciblés uniquement sur la zone affectée pour réduire les coûts."
+                ),
+                "Portuguese (Português)": (
+                    f"⚠️ Alerta Khetify:\n"
+                    f"Doença detectada nas coordenadas ({infected_lat:.4f}, {infected_lon:.4f}). "
+                    f"Não pulverize o campo inteiro. Aplique pesticidas direcionados apenas na área afetada para economizar custos."
+                )
+            }
+            
+            st.text_area(f"Automated Broadcast Content ({selected_lang}):", value=sms_templates[selected_lang], height=150)
 else:
     st.info("👈 Enter coordinates or run initial diagnostic to activate the interactive live matrix view.")
