@@ -122,6 +122,44 @@ LANG_DATA = {
         "disease_detected": "⚠️ Roya fúngica de la hoja detectada. Acción requerida.",
         "remedy_text": "👉 **Recomendación:** Aplique el fungicida *Tebuconazole* o *Propiconazole* **SOLO dentro de la zona del círculo rojo identificado**. No fumigue todo el campo. Aplique dentro de las 48 horas para contener la infección."
     },
+    "Portuguese (Português)": {
+        "title": "🌾 Khetify - Diagnóstico Satelital em Tempo Real",
+        "subtitle": "Insira as coordenadas ou **clique em qualquer lugar do mapa** para executar a análise multiespectral ao vivo.",
+        "sidebar_title": "📍 Coordenadas do Campo",
+        "lat": "Latitude",
+        "lon": "Longitude",
+        "sat_config": "🛰️ Configuração do Satélite",
+        "sat_select": "Selecionar Satélite Alvo:",
+        "btn_run": "⚙️ Executar Diagnóstico Satelital",
+        "results_heading": "📊 Resultados da Análise Satelital",
+        "map_heading": "🗺️ Mapeamento de Precisão do Campo",
+        "metrics_heading": "📈 Métricas de Diagnóstico Centrais",
+        "active_target": "Alvo de Coordenadas Ativo",
+        "size": "Tamanho",
+        "acres": "Acres",
+        "status_healthy": "✅ Status do Campo: SAUDÁVEL",
+        "status_infected": "🚨 Status do Campo: ANOMALIA DETECTADA (INFECTADO)",
+        "ndvi": "NDVI (Índice de Vegetação)",
+        "moisture": "Perfil de Umidade do Solo",
+        "stable_veg": "Vegetação Estável",
+        "optimal_range": "Intervalo Ideal",
+        "stress_drop": "Queda Crítica de Estresse",
+        "economic_heading": "💰 Valor Econômico Estimado do Campo",
+        "economic_loss_heading": "💰 Impacto Econômico Projetado",
+        "market_value": "Valor de Mercado Est. da Produção Total",
+        "target_attained": "100% do Objetivo Alcançado",
+        "value_caption": "As métricas de valor estão vinculadas dinamicamente ao índice de mercado regional e à escala de área atual.",
+        "risk_value": "Valor de Exposição ao Risco (Perda Potencial)",
+        "yield_vuln": "Vulnerabilidade de Rendimento da Cultura",
+        "spray_savings": "Economia de Custos com Pulverização Direcionada",
+        "chem_reduction": "+90% de Redução Química",
+        "alert_heading": "📱 Alerta Automatizado para o Agricultor",
+        "broadcast_title": "Conteúdo da Transmissão Automatizada",
+        "remedy_heading": "💊 Plano de Ação e Remédio Direcionado por IA",
+        "info_sidebar": "👈 Insira as coordenadas ou execute o diagnóstico inicial para ativar a visualização da matriz.",
+        "disease_detected": "⚠️ Ferrugem fúngica da folha detectada. Ação necessária.",
+        "remedy_text": "👉 **Recomendação:** Aplique o fungicida *Tebuconazole* ou *Propiconazole* **APENAS dentro da zona do círculo vermelho identificada**. Não pulverize o campo inteiro. Garanta a aplicação localizada em até 48 horas para evitar a propagação."
+    },
     "Punjabi (پنجابی)": {
         "title": "🌾 کھیتی فائی - لائیو سیٹلائٹ تجزیاتی نظام",
         "subtitle": "کوآرڈینیٹس درج کرو یا لائیو رپورٹ دیکھن لئی **نقشے تے کتھے بھی کلک کرو**۔",
@@ -199,7 +237,7 @@ LANG_DATA = {
         "remedy_text": "👉 **التوصية:** قم برش مبيد الفطريات *Tebuconazole* أو *Propiconazole* **فقط داخل منطقة الدائرة الحمراء المحددة**. لا ترش الحقل بأكمله. تأكد من التطبيق الموضعي خلال 48 ساعة لمنع الانتشار."
     },
     "Hindi (हिंदी)": {
-        "title": "🌾 खेतीफाई - रियल-टाइम सैटेलाइट डायग्नोस्टिक्स",
+        "title": "🌾 खेतीफाई - रियल-TIME सैटेलाइट डायग्नोस्टिक्स",
         "subtitle": "निर्देशांक दर्ज करें या लाइव मल्टी-स्पेक्ट्रल विश्लेषण चलाने के लिए **मानचित्र पर कहीं भी क्लिक करें**।",
         "sidebar_title": "📍 खेत के निर्देशांक",
         "lat": "अक्षांश (Latitude)",
@@ -240,8 +278,8 @@ LANG_DATA = {
 
 # --- GLOBAL LANGUAGE SELECTOR ---
 selected_lang = st.selectbox(
-    "🌐 Select System Language / زبان منتخب کریں / Seleccione el idioma:",
-    ["English", "Urdu (اردو)", "Spanish (Español)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)"]
+    "🌐 Select System Language / زبان منتخب کریں / Seleccione o idioma:",
+    ["English", "Urdu (اردو)", "Spanish (Español)", "Portuguese (Português)", "Punjabi (پنجابی)", "Arabic (العربية)", "Hindi (हिंदी)"]
 )
 
 T = LANG_DATA[selected_lang]
@@ -320,29 +358,25 @@ if st.session_state.clicked:
             attr="Google Satellite Imagery"
         )
         
-        # FIX 1: Map rendering constraints updated
+        # UPGRADE: Square Boundary Box has been replaced with a precise circle layer mapping logic
         if not is_infected:
-            # Healthy Field Boundary Box (Green) shown normally
-            folium.Polygon(
-                locations=[
-                    [current_lat - 0.002, current_lon - 0.002],
-                    [current_lat - 0.002, current_lon + 0.002],
-                    [current_lat + 0.002, current_lon + 0.002],
-                    [current_lat + 0.002, current_lon - 0.002]
-                ],
+            # Precise Selection Circle (Green) for Targeted Tracking
+            folium.Circle(
+                radius=110,
+                location=[current_lat, current_lon],
                 color="#00FF00",
                 fill=True,
                 fill_color="#00FF00",
                 fill_opacity=0.35,
-                popup=f"Healthy Vegetation Zone"
+                popup=f"Healthy Vegetation Target Area"
             ).add_to(m)
             
         else:
-            # If infected, GREEN BOX IS REMOVED COMPLETELY. ONLY Standalone Red Circle triggers.
+            # Standalone Red Circle Anomaly Detection Radar
             infected_lat = current_lat + 0.0004
             infected_lon = current_lon + 0.0004
             folium.Circle(
-                radius=65, # Clear visible operational meter radius
+                radius=65, 
                 location=[infected_lat, infected_lon],
                 color="#FF0000",
                 fill=True,
@@ -387,7 +421,6 @@ if st.session_state.clicked:
             st.metric(label=T["risk_value"], value=f"PKR {calc_risk_exposure:,}", delta=T["yield_vuln"], delta_color="inverse")
             st.metric(label=T["spray_savings"], value=f"PKR {calc_savings:,}", delta=T["chem_reduction"])
 
-    # FIX 3: REMEDY & SMS SECTIONS SHIFTED OUTSIDE COLUMNS TO THE BOTTOM (Map Ke Niche Full Width)
     if is_infected:
         st.markdown("---")
         remedy_col, alert_col = st.columns(2)
@@ -405,12 +438,12 @@ if st.session_state.clicked:
             sms_texts = {
                 "English": f"⚠️ Khetify Alert:\nDisease detected at coordinates ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Apply targeted pesticide inside the marked red circle to save input costs.",
                 "Urdu (اردو)": f"⚠️ کھیتی فائی الرٹ:\nآپکے کھیت کے کوآرڈینیٹس ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) پر بیماری ملی ہے۔ نقصان سے بچنے کے لیے صرف نشان زدہ سرخ دائرے کے اندر سپرے کریں۔",
-                "Spanish (Español)": f"⚠️ Alerta Khetify:\nInfección detectada en ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Aplique pesticida localizado solo dentro del círculo rojo para ahorrar costos.",
+                "Spanish (Español)": f"⚠️ Alerta Khetify:\nInfección detectada en ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Aplique pesticida localizado solo dentro del círculo vermelho para ahorrar costos.",
+                "Portuguese (Português)": f"⚠️ Alerta Khetify:\nDoença detectada nas coordenadas ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). Aplique pesticida direcionado apenas dentro do círculo vermelho para economizar custos.",
                 "Punjabi (پنجابی)": f"⚠️ کھیتی فائی الرٹ:\nتہاڈے کھیت دے کوآرڈینیٹس ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) تے بیماری لبی اے۔ نقصان توں بچن لئی صرف لال دائرے دے اندر سپرے کرو۔",
                 "Arabic (العربية)": f"⚠️ تنبيه خيتيفاي:\nتم رصد إصابة في ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}). يرجى رش المبيد الحشري فقط داخل الدائرة الحمراء المحددة لتوفير التكاليف.",
                 "Hindi (हिंदी)": f"⚠️ खेतीफाई अलर्ट:\nआपके खेत के निर्देशांक ({infected_lat_sms:.4f}, {infected_lon_sms:.4f}) पर बीमारी मिली है। नुकसान से बचने के लिए केवल चिन्हित लाल घेरे के अंदर ही छिड़काव करें।"
             }
-            # Fallback handling for safety assignment loops
             sms_val = sms_texts.get(selected_lang, sms_texts["English"])
             st.text_area(f"{T['broadcast_title']}:", value=sms_val, height=130)
 else:
