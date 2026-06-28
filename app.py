@@ -18,23 +18,29 @@ lon = st.sidebar.number_input("Longitude", value=73.9621, format="%.4f")
 st.sidebar.markdown("---")
 run_analysis = st.sidebar.button("⚙️ Run Satellite Diagnostics", type="primary")
 
-# --- BACKEND LOGIC: Deterministic Analysis Based on Coordinates ---
+# --- SESSION STATE MANAGEMENT ---
+# Initialize button state so values persist across map re-renders
+if "clicked" not in st.session_state:
+    st.session_state.clicked = False
+
+if run_analysis:
+    st.session_state.clicked = True
+
+# --- BACKEND LOGIC ---
 coord_hash = int(hashlib.md5(f"{lat:.4f},{lon:.4f}".encode()).hexdigest(), 16)
 is_infected = (coord_hash % 2) == 1  
 
-if run_analysis:
+# Check against session state instead of raw button to prevent disappearing
+if st.session_state.clicked:
     st.subheader("📊 Satellite Analysis Results")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("### 🗺️ Precision Field Mapping")
-        
-        # FIXED: Using standard OpenStreetMap tiles to completely avoid attribution ValueErrors
         m = folium.Map(location=[lat, lon], zoom_start=15, tiles="OpenStreetMap")
         
         if not is_infected:
-            # Healthy Field: Clean green polygon covering the field area
             folium.Polygon(
                 locations=[
                     [lat - 0.003, lon - 0.003],
@@ -50,7 +56,6 @@ if run_analysis:
             ).add_to(m)
             
         else:
-            # Base Farm Area
             folium.Polygon(
                 locations=[
                     [lat - 0.003, lon - 0.003],
@@ -65,7 +70,6 @@ if run_analysis:
                 popup="Overall Field Bound"
             ).add_to(m)
             
-            # Isolated Infected Patch (Specific Disease Zone)
             infected_lat = lat + 0.001
             infected_lon = lon + 0.001
             folium.Polygon(
@@ -82,8 +86,8 @@ if run_analysis:
                 popup="⚠️ WARNING: High Fungal/Pest Infection Detected!"
             ).add_to(m)
             
-        # Render Map safely
-        st_folium(m, width=800, height=500)
+        # Render Map safely without dropping state
+        st_folium(m, width=800, height=500, key="khetify_map")
         
     with col2:
         st.markdown("### 📈 Core Diagnostics Metrics")
