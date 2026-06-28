@@ -82,7 +82,7 @@ LANG_DATA = {
         "remedy_heading": "💊 آرٹیفیشل انٹیلیجنس تجویز اور طریقہ علاج",
         "info_sidebar": "👈 لائیو میٹرکس اور نقشہ فعال کرنے کے لیے کوآرڈینیٹس درج کریں یا ٹیسٹ کا بٹن دبائیں۔",
         "disease_detected": "⚠️ پودوں میں فنگل لیف رسٹ (کنگی کی بیماری) پائی گئی ہے۔",
-        "remedy_text": "👉 **تجویز کردہ طریقہ علاج:** فنگس کش دوا *Tebuconazole* یا *Propiconazole* کا اسپرے **صرف نقشے پر نشان زدہ سرخ دائرے کے اندر کریں**۔ پورے کھیت میں اسپرے کرنے کی بالکل ضرورت نہیں ہے۔ اگلے 48 گھنٹوں میں اسپرے مکمل کریں تاکہ بیماری مزید نہ پھیلے۔"
+        "remedy_text": "👉 **تجویز کردہ طریقہ علاج:** فنگس کش دوا *Tebuconazole* یا *Propiconazole* کا اسپرے **صرح نقشے پر نشان زدہ سرخ دائرے کے اندر کریں**۔ پورے کھیت میں اسپرے کرنے کی بالکل ضرورت نہیں ہے۔ اگلے 48 گھنٹوں میں اسپرے مکمل کریں تاکہ بیماری مزید نہ پھیلے۔"
     },
     "Spanish (Español)": {
         "title": "🌾 Khetify - Diagnóstico Satelital en Tiempo Real",
@@ -125,13 +125,11 @@ LANG_DATA = {
 }
 
 # --- GLOBAL LANGUAGE SELECTOR ---
-# Placed at the very top of the script layout
 selected_lang = st.selectbox(
     "🌐 Select System Language / زبان منتخب کریں / Seleccione el idioma del sistema:",
     ["English", "Urdu (اردو)", "Spanish (Español)"]
 )
 
-# Fetch current active dictionary based on user choice
 T = LANG_DATA[selected_lang]
 
 st.title(T["title"])
@@ -169,7 +167,7 @@ run_analysis = st.sidebar.button(T["btn_run"], type="primary")
 if run_analysis:
     st.session_state.clicked = True
 
-# --- DYNAMIC CALCULATION ENGINE BASED ON COORDINATES ---
+# --- DYNAMIC CALCULATION ENGINE ---
 current_lat = st.session_state.lat
 current_lon = st.session_state.lon
 
@@ -208,9 +206,7 @@ if st.session_state.clicked:
             attr="Google Satellite Imagery"
         )
         
-        # FIXED MAP VISUALIZATION: Dynamic polygon & localized red circles
         if not is_infected:
-            # Healthy Field Boundary Box (Green)
             folium.Polygon(
                 locations=[
                     [current_lat - 0.002, current_lon - 0.002],
@@ -226,7 +222,6 @@ if st.session_state.clicked:
             ).add_to(m)
             
         else:
-            # Boundary box stays normal/transparent green, NO red inside it
             folium.Polygon(
                 locations=[
                     [current_lat - 0.002, current_lon - 0.002],
@@ -241,11 +236,11 @@ if st.session_state.clicked:
                 popup="Field Boundary"
             ).add_to(m)
             
-            # Specific isolated RED CIRCLE to pinpoint exactly where the infection is located
+            # Precise Red Circle Layer
             infected_lat = current_lat + 0.0004
             infected_lon = current_lon + 0.0004
             folium.Circle(
-                radius=45, # Radius in meters
+                radius=45,
                 location=[infected_lat, infected_lon],
                 color="#FF0000",
                 fill=True,
@@ -254,9 +249,10 @@ if st.session_state.clicked:
                 popup="⚠️ Infection Center Spot!"
             ).add_to(m)
             
+        # FIXED LINE BELOW: Stripped out the syntax error token
         map_output = st_folium(m, width=800, height=520, key="khetify_fixed_map_layer")
         
-        if map_output and "last_clicked" in map_output biases and map_output["last_clicked"] is not None:
+        if map_output and "last_clicked" in map_output and map_output["last_clicked"] is not None:
             clicked_data = map_output["last_clicked"]
             clicked_lat = round(clicked_data["lat"], 4)
             clicked_lon = round(clicked_data["lng"], 4)
@@ -298,7 +294,6 @@ if st.session_state.clicked:
             st.markdown("---")
             st.markdown(f"### {T['alert_heading']}")
             
-            # Auto translate SMS alerts alongside layout definitions
             infected_lat_sms = current_lat + 0.0004
             infected_lon_sms = current_lon + 0.0004
             
