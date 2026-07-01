@@ -4,3 +4,4 @@ streamlit-folium
 pandas
 numpy
 requests
+openpyxl==3.1.2
